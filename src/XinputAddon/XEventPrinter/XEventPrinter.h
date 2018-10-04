@@ -10,12 +10,12 @@ class XEventPrinter
 {
     public:
         static const char* type_to_name(int evtype);
-        static void print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event);
-        static void print_hierarchychangedevent(XIHierarchyEvent *event);
-        static void print_rawevent(XIRawEvent *event);
-        static void print_enterleave(XILeaveEvent* event);
-        static void print_propertyevent(Display *display, XIPropertyEvent* event);
-        static void print_deviceevent(XIDeviceEvent* event);
+        static void devicechanged(Display *dpy, XIDeviceChangedEvent *event);
+        static void hierarchychanged(XIHierarchyEvent *event);
+        static void raw(XIRawEvent *event);
+        static void enterleave(XILeaveEvent* event);
+        static void property(Display *display, XIPropertyEvent* event);
+        static void device(XIDeviceEvent* event);
 
     private:
         XEventPrinter() {}

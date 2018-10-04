@@ -36,7 +36,7 @@ XEventPrinter::type_to_name(int evtype)
 }
 
 void 
-XEventPrinter::print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event)
+XEventPrinter::devicechanged(Display *dpy, XIDeviceChangedEvent *event)
 {
     printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
     printf("    reason: %s\n", (event->reason == XISlaveSwitch) ? "SlaveSwitch" :
@@ -44,7 +44,7 @@ XEventPrinter::print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *even
 }
 
 void 
-XEventPrinter::print_hierarchychangedevent(XIHierarchyEvent *event)
+XEventPrinter::hierarchychanged(XIHierarchyEvent *event)
 {
     int i;
     printf("    Changes happened: %s %s %s %s %s %s %s %s\n",
@@ -91,7 +91,7 @@ XEventPrinter::print_hierarchychangedevent(XIHierarchyEvent *event)
 }
 
 void
-XEventPrinter::print_rawevent(XIRawEvent *event)
+XEventPrinter::raw(XIRawEvent *event)
 {
     int i;
     double *val, *raw_val;
@@ -109,7 +109,7 @@ XEventPrinter::print_rawevent(XIRawEvent *event)
 }
 
 void 
-XEventPrinter::print_enterleave(XILeaveEvent* event)
+XEventPrinter::enterleave(XILeaveEvent* event)
 {
     char *mode = "<undefined>",
          *detail = "<undefined>";
@@ -160,7 +160,7 @@ XEventPrinter::print_enterleave(XILeaveEvent* event)
 }
 
 void 
-XEventPrinter::print_propertyevent(Display *display, XIPropertyEvent* event)
+XEventPrinter::property(Display *display, XIPropertyEvent* event)
 {
     char *changed;
     char *name;
@@ -179,7 +179,7 @@ XEventPrinter::print_propertyevent(Display *display, XIPropertyEvent* event)
 }
 
 void 
-XEventPrinter::print_deviceevent(XIDeviceEvent* event)
+XEventPrinter::device(XIDeviceEvent* event)
 {
     double *val;
     int i;

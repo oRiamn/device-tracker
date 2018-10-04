@@ -155,10 +155,10 @@ XinputWatcher::print_events(Display	*display)
         switch (cookie->evtype)
         {
             case XI_DeviceChanged:
-                XEventPrinter::print_devicechangedevent(display, cookie->data);
+                XEventPrinter::devicechanged(display, cookie->data);
                 break;
             case XI_HierarchyChanged:
-                XEventPrinter::print_hierarchychangedevent(cookie->data);
+                XEventPrinter::hierarchychanged(cookie->data);
                 break;
             case XI_RawKeyPress:
             case XI_RawKeyRelease:
@@ -168,19 +168,19 @@ XinputWatcher::print_events(Display	*display)
             case XI_RawTouchBegin:
             case XI_RawTouchUpdate:
             case XI_RawTouchEnd:
-                XEventPrinter::print_rawevent(cookie->data);
+                XEventPrinter::raw(cookie->data);
                 break;
             case XI_Enter:
             case XI_Leave:
             case XI_FocusIn:
             case XI_FocusOut:
-                XEventPrinter::print_enterleave(cookie->data);
+                XEventPrinter::enterleave(cookie->data);
                 break;
             case XI_PropertyEvent:
-                XEventPrinter::print_propertyevent(display, cookie->data);
+                XEventPrinter::property(display, cookie->data);
                 break;
             default:
-                XEventPrinter::print_deviceevent(cookie->data);
+                XEventPrinter::device(cookie->data);
                 break;
         }
     }
