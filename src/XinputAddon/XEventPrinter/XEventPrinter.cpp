@@ -1,193 +1,7 @@
-#include "XinputWatcher.h"
-
-Display XinputWatcher::*dpy;
-XDeviceInfo *info = NULL;
-Window win;
-
-XIEventMask mask[2];
-XIEventMask *m;
-
-XinputWatcher::XinputWatcher()
-{
-	dpy = XOpenDisplay(NULL);
-	win = DefaultRootWindow(dpy);
-}
-
-void XinputWatcher::watch(std::string inputID)
-{
-	// cast std:string to char*
-	char *inputIdChar = new char[inputID.length() + 1];
-	strcpy(inputIdChar, inputID.c_str());
-
-	info = find_device_info(inputIdChar, True);
-
-	if (!info)
-	{
-		fprintf(stderr, "unable to find device '%s'\n", inputIdChar);
-	}
-	else
-	{
-		test_xi2(dpy, 15);
-	}
-}
-
-XDeviceInfo *
-XinputWatcher::find_device_info(char *name,
-								Bool only_extended)
-{
-	XDeviceInfo *devices;
-	XDeviceInfo *found = NULL;
-	int loop;
-	int num_devices;
-	int len = strlen(name);
-	Bool is_id = True;
-	XID id = (XID)-1;
-
-	for (loop = 0; loop < len; loop++)
-	{
-		if (!isdigit(name[loop]))
-		{
-			is_id = False;
-			break;
-		}
-	}
-
-	if (is_id)
-	{
-		id = atoi(name);
-	}
-
-	devices = XListInputDevices(dpy, &num_devices);
-
-	for (loop = 0; loop < num_devices; loop++)
-	{
-		if ((!only_extended || (devices[loop].use >= IsXExtensionDevice)) &&
-			((!is_id && strcmp(devices[loop].name, name) == 0) ||
-			 (is_id && devices[loop].id == id)))
-		{
-			if (found)
-			{
-				fprintf(stderr,
-						"Warning: There are multiple devices named '%s'.\n"
-						"To ensure the correct one is selected, please use "
-						"the device ID instead.\n\n",
-						name);
-				return NULL;
-			}
-			else
-			{
-				found = &devices[loop];
-			}
-		}
-	}
-	return found;
-}
-
-int
-XinputWatcher::test_xi2(Display	*display,
-         int deviceid)
-{
-    XIEventMask mask[2];
-    XIEventMask *m;
-    Window win;
-
-    setvbuf(stdout, NULL, _IOLBF, 0);
-	
-	win = DefaultRootWindow(display);
-
-    /* Select for motion events */
-    m = &mask[0];
-    m->deviceid = deviceid;
-    m->mask_len = XIMaskLen(XI_LASTEVENT);
-    m->mask = calloc(m->mask_len, sizeof(char));
-    XISetMask(m->mask, XI_ButtonPress);
-    XISetMask(m->mask, XI_ButtonRelease);
-    XISetMask(m->mask, XI_KeyPress);
-    XISetMask(m->mask, XI_KeyRelease);
-    XISetMask(m->mask, XI_Motion);
-    XISetMask(m->mask, XI_DeviceChanged);
-    XISetMask(m->mask, XI_Enter);
-    XISetMask(m->mask, XI_Leave);
-    XISetMask(m->mask, XI_FocusIn);
-    XISetMask(m->mask, XI_FocusOut);
-
-    if (m->deviceid == XIAllDevices)
-        XISetMask(m->mask, XI_HierarchyChanged);
-    XISetMask(m->mask, XI_PropertyEvent);
-
-    m = &mask[1];
-    m->deviceid = (deviceid == -1) ? XIAllMasterDevices : deviceid;
-    m->mask_len = XIMaskLen(XI_LASTEVENT);
-    m->mask = calloc(m->mask_len, sizeof(char));
-    XISetMask(m->mask, XI_RawKeyPress);
-    XISetMask(m->mask, XI_RawKeyRelease);
-    XISetMask(m->mask, XI_RawButtonPress);
-    XISetMask(m->mask, XI_RawButtonRelease);
-    XISetMask(m->mask, XI_RawMotion);
-
-    XISelectEvents(display, win, &mask[0], 2);
-    XSync(display, False);
-
-    free(mask[0].mask);
-    free(mask[1].mask);
-
-    /*
-    test_sync_grab(display, win);
-    */
-
-    while(1)
-    {
-        XEvent ev;
-        XGenericEventCookie *cookie = (XGenericEventCookie*)&ev.xcookie;
-        XNextEvent(display, (XEvent*)&ev);
-
-        if (XGetEventData(display, cookie) &&
-            cookie->type == GenericEvent)
-        {
-            printf("EVENT type %d (%s)\n", cookie->evtype, type_to_name(cookie->evtype));
-            switch (cookie->evtype)
-            {
-                case XI_DeviceChanged:
-                    print_devicechangedevent(display, cookie->data);
-                    break;
-                case XI_HierarchyChanged:
-                    print_hierarchychangedevent(cookie->data);
-                    break;
-                case XI_RawKeyPress:
-                case XI_RawKeyRelease:
-                case XI_RawButtonPress:
-                case XI_RawButtonRelease:
-                case XI_RawMotion:
-                case XI_RawTouchBegin:
-                case XI_RawTouchUpdate:
-                case XI_RawTouchEnd:
-                    print_rawevent(cookie->data);
-                    break;
-                case XI_Enter:
-                case XI_Leave:
-                case XI_FocusIn:
-                case XI_FocusOut:
-                    print_enterleave(cookie->data);
-                    break;
-                case XI_PropertyEvent:
-                    print_propertyevent(display, cookie->data);
-                    break;
-                default:
-                    print_deviceevent(cookie->data);
-                    break;
-            }
-        }
-
-        XFreeEventData(display, cookie);
-    }
-
-    XDestroyWindow(display, win);
-
-    return EXIT_SUCCESS;
-}
+#include "XEventPrinter.h"
 
 const char* 
-XinputWatcher::type_to_name(int evtype)
+XEventPrinter::type_to_name(int evtype)
 {
     const char *name;
 
@@ -222,7 +36,7 @@ XinputWatcher::type_to_name(int evtype)
 }
 
 void 
-XinputWatcher::print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event)
+XEventPrinter::print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event)
 {
     printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
     printf("    reason: %s\n", (event->reason == XISlaveSwitch) ? "SlaveSwitch" :
@@ -230,7 +44,7 @@ XinputWatcher::print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *even
 }
 
 void 
-XinputWatcher::print_hierarchychangedevent(XIHierarchyEvent *event)
+XEventPrinter::print_hierarchychangedevent(XIHierarchyEvent *event)
 {
     int i;
     printf("    Changes happened: %s %s %s %s %s %s %s %s\n",
@@ -277,7 +91,7 @@ XinputWatcher::print_hierarchychangedevent(XIHierarchyEvent *event)
 }
 
 void
-XinputWatcher::print_rawevent(XIRawEvent *event)
+XEventPrinter::print_rawevent(XIRawEvent *event)
 {
     int i;
     double *val, *raw_val;
@@ -295,7 +109,7 @@ XinputWatcher::print_rawevent(XIRawEvent *event)
 }
 
 void 
-XinputWatcher::print_enterleave(XILeaveEvent* event)
+XEventPrinter::print_enterleave(XILeaveEvent* event)
 {
     char *mode = "<undefined>",
          *detail = "<undefined>";
@@ -346,7 +160,7 @@ XinputWatcher::print_enterleave(XILeaveEvent* event)
 }
 
 void 
-XinputWatcher::print_propertyevent(Display *display, XIPropertyEvent* event)
+XEventPrinter::print_propertyevent(Display *display, XIPropertyEvent* event)
 {
     char *changed;
     char *name;
@@ -365,7 +179,7 @@ XinputWatcher::print_propertyevent(Display *display, XIPropertyEvent* event)
 }
 
 void 
-XinputWatcher::print_deviceevent(XIDeviceEvent* event)
+XEventPrinter::print_deviceevent(XIDeviceEvent* event)
 {
     double *val;
     int i;
