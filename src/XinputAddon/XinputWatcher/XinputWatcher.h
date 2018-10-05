@@ -13,20 +13,20 @@ using namespace std;
 class XinputWatcher
 {
     public:
-        Display *dpy;
         XinputWatcher();
         virtual ~XinputWatcher();
         int watch(std::string inputID);
-        int print_events(Display *display);
+        int print_events();
 
     protected:
 
-    private:        
+    private:
+        Display *dpy;        
         Window win;
         XIEventMask mask[2];
         XIEventMask *m;
         XDeviceInfo * find_device_info(char *name, Bool only_extended);        
-        int register_device(Display	*display,int deviceid);
+        int register_device(int deviceid);
 };
 
 #endif // XINPUTWATCHER_H

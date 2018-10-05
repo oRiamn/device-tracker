@@ -13,7 +13,7 @@ int main( int argc, const char* argv[] )
 
     int i = 0;
 	while(true){
-        watcher.print_events(watcher.dpy);
+        watcher.print_events();
         i++;
     }
 

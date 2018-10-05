@@ -34,7 +34,7 @@ int XinputWatcher::watch(std::string inputID)
 	}
 	else
 	{
-		register_device(dpy, info->id);
+		register_device( info->id);
 	}
 
     return EXIT_SUCCESS;
@@ -93,8 +93,7 @@ XinputWatcher::find_device_info(char *name,
 }
 
 int
-XinputWatcher::register_device(Display	*display,
-         int deviceid)
+XinputWatcher::register_device(int deviceid)
 {
     XIEventMask mask[2];
     XIEventMask *m;
@@ -131,8 +130,8 @@ XinputWatcher::register_device(Display	*display,
     XISetMask(m->mask, XI_RawButtonRelease);
     XISetMask(m->mask, XI_RawMotion);
 
-    XISelectEvents(display, win, &mask[0], 2);
-    XSync(display, False);
+    XISelectEvents(dpy, win, &mask[0], 2);
+    XSync(dpy, False);
 
     free(mask[0].mask);
     free(mask[1].mask);
@@ -141,21 +140,21 @@ XinputWatcher::register_device(Display	*display,
 }
 
 int
-XinputWatcher::print_events(Display	*display)
+XinputWatcher::print_events()
 {
 
     XEvent ev;
     XGenericEventCookie *cookie = (XGenericEventCookie*)&ev.xcookie;
-    XNextEvent(display, (XEvent*)&ev);
+    XNextEvent(dpy, (XEvent*)&ev);
 
-    if (XGetEventData(display, cookie) &&
+    if (XGetEventData(dpy, cookie) &&
         cookie->type == GenericEvent)
     {
         printf("EVENT type %d (%s)\n", cookie->evtype, XEventPrinter::type_to_name(cookie->evtype));
         switch (cookie->evtype)
         {
             case XI_DeviceChanged:
-                XEventPrinter::devicechanged(display, cookie->data);
+                XEventPrinter::devicechanged(dpy, cookie->data);
                 break;
             case XI_HierarchyChanged:
                 XEventPrinter::hierarchychanged(cookie->data);
@@ -177,7 +176,7 @@ XinputWatcher::print_events(Display	*display)
                 XEventPrinter::enterleave(cookie->data);
                 break;
             case XI_PropertyEvent:
-                XEventPrinter::property(display, cookie->data);
+                XEventPrinter::property(dpy, cookie->data);
                 break;
             default:
                 XEventPrinter::device(cookie->data);
@@ -185,7 +184,7 @@ XinputWatcher::print_events(Display	*display)
         }
     }
 
-    XFreeEventData(display, cookie);
+    XFreeEventData(dpy, cookie);
 
     return EXIT_SUCCESS;
 }

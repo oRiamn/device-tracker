@@ -38,24 +38,27 @@ XEventPrinter::type_to_name(int evtype)
 void 
 XEventPrinter::devicechanged(Display *dpy, XIDeviceChangedEvent *event)
 {
-    printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
-    printf("    reason: %s\n", (event->reason == XISlaveSwitch) ? "SlaveSwitch" :
-                                "DeviceChanged");
+    std::cout << "    device: " << event->deviceid << " (" << event->sourceid << ")" << std::endl;
+    std::cout << "    reason: ";
+        std::cout<< (event->reason == XISlaveSwitch ? "SlaveSwitch" : "DeviceChanged");
+    std::cout << std::endl;
 }
 
 void 
 XEventPrinter::hierarchychanged(XIHierarchyEvent *event)
 {
     int i;
-    printf("    Changes happened: %s %s %s %s %s %s %s %s\n",
-            (event->flags & XIMasterAdded) ? "[new master]" : "",
-            (event->flags & XIMasterRemoved) ? "[master removed]" : "",
-            (event->flags & XISlaveAdded) ? "[new slave]" : "",
-            (event->flags & XISlaveRemoved) ? "[slave removed]" : "",
-            (event->flags & XISlaveAttached) ? "[slave attached]" : "",
-            (event->flags & XISlaveDetached) ? "[slave detached]" : "",
-            (event->flags & XIDeviceEnabled) ? "[device enabled]" : "",
-            (event->flags & XIDeviceDisabled) ? "[device disabled]" : "");
+
+    std::cout << "    Changes happened: ";
+        std::cout << (event->info[i].flags & XIMasterAdded ? "[new master]" : "");
+        std::cout << (event->info[i].flags & XIMasterRemoved ? "[master removed]" : "");
+        std::cout << (event->info[i].flags & XISlaveAdded ? "[new slave]" : "");
+        std::cout << (event->info[i].flags & XISlaveRemoved ? "[slave removed]" : "");
+        std::cout << (event->info[i].flags & XISlaveAttached ? "[slave attached]" : "");
+        std::cout << (event->info[i].flags & XISlaveDetached ? "[slave detached]" : "");
+        std::cout << (event->info[i].flags & XIDeviceEnabled ? "[device enabled]" : "");
+        std::cout << (event->info[i].flags & XIDeviceDisabled ? "[device disabled]" : "");
+    std::cout << std::endl;
 
     for (i = 0; i < event->num_info; i++)
     {
@@ -69,23 +72,24 @@ XEventPrinter::hierarchychanged(XIHierarchyEvent *event)
             case XIFloatingSlave: use = "floating slave"; break;
                 break;
         }
-
-        printf("    device %d [%s (%d)] is %s\n",
-                event->info[i].deviceid,
-                use,
-                event->info[i].attachment,
-                (event->info[i].enabled) ? "enabled" : "disabled");
+        
+        std::cout << "    device " << event->info[i].deviceid;
+            std::cout << "["  << use << " (" << event->info[i].attachment << ")]";
+            std::cout << " is " << (event->info[i].enabled ? "enabled" : "disabled");
+        std::cout << std::endl;
+        
         if (event->info[i].flags)
-        {
-            printf("    changes: %s %s %s %s %s %s %s %s\n",
-                    (event->info[i].flags & XIMasterAdded) ? "[new master]" : "",
-                    (event->info[i].flags & XIMasterRemoved) ? "[master removed]" : "",
-                    (event->info[i].flags & XISlaveAdded) ? "[new slave]" : "",
-                    (event->info[i].flags & XISlaveRemoved) ? "[slave removed]" : "",
-                    (event->info[i].flags & XISlaveAttached) ? "[slave attached]" : "",
-                    (event->info[i].flags & XISlaveDetached) ? "[slave detached]" : "",
-                    (event->info[i].flags & XIDeviceEnabled) ? "[device enabled]" : "",
-                    (event->info[i].flags & XIDeviceDisabled) ? "[device disabled]" : "");
+        {   
+            std::cout << "    changes: ";
+                std::cout << (event->info[i].flags & XIMasterAdded ? "[new master]" : "");
+                std::cout << (event->info[i].flags & XIMasterRemoved ? "[master removed]" : "");
+                std::cout << (event->info[i].flags & XISlaveAdded ? "[new slave]" : "");
+                std::cout << (event->info[i].flags & XISlaveRemoved ? "[slave removed]" : "");
+                std::cout << (event->info[i].flags & XISlaveAttached ? "[slave attached]" : "");
+                std::cout << (event->info[i].flags & XISlaveDetached ? "[slave detached]" : "");
+                std::cout << (event->info[i].flags & XIDeviceEnabled ? "[device enabled]" : "");
+                std::cout << (event->info[i].flags & XIDeviceDisabled ? "[device disabled]" : "");
+            std::cout << std::endl;
         }
     }
 }
@@ -96,16 +100,17 @@ XEventPrinter::raw(XIRawEvent *event)
     int i;
     double *val, *raw_val;
 
-    printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
-    printf("    detail: %d\n", event->detail);
+    std::cout << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
+    std::cout << "    detail: " << event->detail << std::endl;
 
-    printf("    valuators:\n");
+    std::cout << "    valuators:" << std::endl;
     val = event->valuators.values;
     raw_val = event->raw_values;
     for (i = 0; i < event->valuators.mask_len * 8; i++)
         if (XIMaskIsSet(event->valuators.mask, i))
-            printf("         %2d: %.2f (%.2f)\n", i, *val++, *raw_val++);
-    printf("\n");
+            std::cout << "         " << i << ": " << *val++ << "(" << *raw_val++ << ")"<< std::endl;
+   
+   std::cout <<  std::endl;
 }
 
 void 
@@ -115,9 +120,14 @@ XEventPrinter::enterleave(XILeaveEvent* event)
          *detail = "<undefined>";
     int i;
 
-    printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
-    printf("    windows: root 0x%lx event 0x%lx child 0x%ld\n",
-            event->root, event->event, event->child);
+    std::cout << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
+
+    std::cout << "    windows: root" << event->root;
+        std::cout << " event " << event->event;
+        std::cout << " child " << event->child;
+    std::cout << std::endl;
+
+
     switch(event->mode)
     {
         case XINotifyNormal:       mode = "NotifyNormal"; break;
@@ -138,25 +148,32 @@ XEventPrinter::enterleave(XILeaveEvent* event)
         case XINotifyPointerRoot: detail = "NotifyPointerRoot"; break;
         case XINotifyDetailNone: detail = "NotifyDetailNone"; break;
     }
-    printf("    mode: %s (detail %s)\n", mode, detail);
-    printf("    flags: %s %s\n", event->focus ? "[focus]" : "",
-                                 event->same_screen ? "[same screen]" : "");
-    printf("    buttons:");
+
+    std::cout << "    mode: " << mode << "(detail " << detail << ")" << std::endl;
+
+    std::cout << "    flags: ";
+        std::cout << (event->focus ? "[focus]" : "" ) << " ";
+        std::cout <<  (event->same_screen ? "[same screen]" : "");
+    std::cout << std::endl;
+
+    std::cout << "    buttons:";
     for (i = 0; i < event->buttons.mask_len * 8; i++)
         if (XIMaskIsSet(event->buttons.mask, i))
-            printf(" %d", i);
-    printf("\n");
+            std::cout << " " << i;
 
-    printf("    modifiers: locked %#x latched %#x base %#x effective: %#x\n",
-            event->mods.locked, event->mods.latched,
-            event->mods.base, event->mods.effective);
-    printf("    group: locked %#x latched %#x base %#x effective: %#x\n",
-            event->group.locked, event->group.latched,
-            event->group.base, event->group.effective);
+    std::cout << std::endl;
+    
+    std::cout << "    modifiers: locked " << event->mods.locked << " latched" << event->mods.latched;
+        std::cout << " base " << event->mods.locked << " effective: " << event->mods.effective;
+    std::cout << std::endl;
+    
 
-    printf("    root x/y:  %.2f / %.2f\n", event->root_x, event->root_y);
-    printf("    event x/y: %.2f / %.2f\n", event->event_x, event->event_y);
+    std::cout << "    group: locked " << event->group.locked << " latched" << event->group.latched;
+        std::cout << " base " << event->group.locked << " effective: " << event->group.effective;
+    std::cout << std::endl;
 
+    std::cout << "    root x/y:  " << event->root_x << "/" <<  event->root_y  << std::endl;
+    std::cout << "    event x/y:  " << event->event_x << "/" <<  event->event_y  << std::endl;
 }
 
 void 
@@ -165,15 +182,18 @@ XEventPrinter::property(Display *display, XIPropertyEvent* event)
     char *changed;
     char *name;
 
-    if (event->what == XIPropertyDeleted)
-        changed = "deleted";
-    else if (event->what == XIPropertyCreated)
-        changed = "created";
-    else
-        changed = "modified";
+     switch(event->what) {
+        case XIPropertyDeleted: changed = "deleted"; break;
+        case XIPropertyCreated: changed = "created"; break;
+        default:
+                                changed = "modified"; break;
+     }
+    
     name = XGetAtomName(display, event->property);
-    printf("     property: %ld '%s'\n", event->property, name);
-    printf("     changed: %s\n", changed);
+
+    std::cout << "     property: " << event->property << " " << name << std::endl;
+
+    std::cout << "     changed: " << changed << std::endl;
 
     XFree(name);
 }
@@ -184,38 +204,47 @@ XEventPrinter::device(XIDeviceEvent* event)
     double *val;
     int i;
 
-    printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
-    printf("    detail: %d\n", event->detail);
+    std::cout << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
+    std::cout << "    detail: " << event->detail << std::endl;
+
     switch(event->evtype) {
         case XI_KeyPress:
         case XI_KeyRelease:
-            printf("    flags: %s\n", (event->flags & XIKeyRepeat) ?  "repeat" : "");
+            std::cout << "    flags: " << ((event->flags & XIKeyRepeat) ?  "repeat" : "") << std::endl;
             break;
     }
 
-    printf("    root: %.2f/%.2f\n", event->root_x, event->root_y);
-    printf("    event: %.2f/%.2f\n", event->event_x, event->event_y);
+    std::cout << "    root: " << event->root_x << " " << event->root_y << std::endl;
+    std::cout << "    event: " << event->event_x << " " << event->event_y << std::endl;
 
-    printf("    buttons:");
+    std::cout << "    buttons:" << std::endl;
     for (i = 0; i < event->buttons.mask_len * 8; i++)
         if (XIMaskIsSet(event->buttons.mask, i))
-            printf(" %d", i);
-    printf("\n");
+            std::cout << " " << i;
+    
+    std::cout << std::endl;
 
-    printf("    modifiers: locked %#x latched %#x base %#x effective: %#x\n",
-            event->mods.locked, event->mods.latched,
-            event->mods.base, event->mods.effective);
-    printf("    group: locked %#x latched %#x base %#x effective: %#x\n",
-            event->group.locked, event->group.latched,
-            event->group.base, event->group.effective);
-    printf("    valuators:\n");
+
+    std::cout << "    modifiers: locked " << event->mods.locked << " latched" << event->mods.latched;
+        std::cout << " base " << event->mods.locked << " effective: " << event->mods.effective;
+    std::cout << std::endl;
+    
+
+    std::cout << "    group: locked " << event->group.locked << " latched" << event->group.latched;
+        std::cout << " base " << event->group.locked << " effective: " << event->group.effective;
+    std::cout << std::endl;
+
+
+    std::cout << "    valuators:" << std::endl;
 
     val = event->valuators.values;
     for (i = 0; i < event->valuators.mask_len * 8; i++)
         if (XIMaskIsSet(event->valuators.mask, i))
-            printf("        %i: %.2f\n", i, *val++);
+            std::cout << "        " << i << ": " << *val++ << std::endl;
 
-    printf("    windows: root 0x%lx event 0x%lx child 0x%lx\n",
-            event->root, event->event, event->child);
+    std::cout << "    windows: root" << event->root;
+        std::cout << " event " << event->event;
+        std::cout << " child " << event->child;
+    std::cout << std::endl;
 }
 
