@@ -1,5 +1,3 @@
-#include "XEventPrinter.h"
-
 const char* 
 XEventPrinter::type_to_name(int evtype)
 {

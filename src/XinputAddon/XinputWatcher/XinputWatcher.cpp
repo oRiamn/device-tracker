@@ -1,5 +1,3 @@
-#include "XinputWatcher.h"
-
 Display *dpy;
 XDeviceInfo *info;
 Window win;
@@ -140,7 +138,7 @@ XinputWatcher::register_device(int deviceid)
 }
 
 int
-XinputWatcher::print_events()
+XinputWatcher::print_events(XEventPrinter printer)
 {
 
     XEvent ev;
@@ -150,14 +148,14 @@ XinputWatcher::print_events()
     if (XGetEventData(dpy, cookie) &&
         cookie->type == GenericEvent)
     {
-        printf("EVENT type %d (%s)\n", cookie->evtype, XEventPrinter::type_to_name(cookie->evtype));
+        printf("EVENT type %d (%s)\n", cookie->evtype, printer.type_to_name(cookie->evtype));
         switch (cookie->evtype)
         {
             case XI_DeviceChanged:
-                XEventPrinter::devicechanged(dpy, cookie->data);
+                printer.devicechanged(dpy, cookie->data);
                 break;
             case XI_HierarchyChanged:
-                XEventPrinter::hierarchychanged(cookie->data);
+                printer.hierarchychanged(cookie->data);
                 break;
             case XI_RawKeyPress:
             case XI_RawKeyRelease:
@@ -167,19 +165,19 @@ XinputWatcher::print_events()
             case XI_RawTouchBegin:
             case XI_RawTouchUpdate:
             case XI_RawTouchEnd:
-                XEventPrinter::raw(cookie->data);
+                printer.raw(cookie->data);
                 break;
             case XI_Enter:
             case XI_Leave:
             case XI_FocusIn:
             case XI_FocusOut:
-                XEventPrinter::enterleave(cookie->data);
+                printer.enterleave(cookie->data);
                 break;
             case XI_PropertyEvent:
-                XEventPrinter::property(dpy, cookie->data);
+                printer.property(dpy, cookie->data);
                 break;
             default:
-                XEventPrinter::device(cookie->data);
+                printer.device(cookie->data);
                 break;
         }
     }
