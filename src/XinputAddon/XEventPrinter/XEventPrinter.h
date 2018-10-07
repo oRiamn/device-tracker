@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string.h>
+#include <sstream>
+
 #include <X11/extensions/XInput.h>
 #include <X11/extensions/XInput2.h>
+
 
 #ifndef XEVENTPRINTER_H
 #define XEVENTPRINTER_H
@@ -10,8 +13,11 @@ class XEventPrinter
 {
     private:
 
+    protected:
+    
     public:
-        XEventPrinter() {}
+        XEventPrinter();
+        std::string flush();
         const char* type_to_name(int evtype);
         void devicechanged(Display *dpy, XIDeviceChangedEvent *event);
         void hierarchychanged(XIHierarchyEvent *event);

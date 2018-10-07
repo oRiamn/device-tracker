@@ -12,14 +12,6 @@ using namespace std;
 
 class XinputWatcher
 {
-    public:
-        XinputWatcher();
-        virtual ~XinputWatcher();
-        int watch(std::string inputID);
-        int print_events(XEventPrinter printer);
-
-    protected:
-
     private:
         Display *dpy;        
         Window win;
@@ -27,6 +19,14 @@ class XinputWatcher
         XIEventMask *m;
         XDeviceInfo * find_device_info(char *name, Bool only_extended);        
         int register_device(int deviceid);
+    
+    protected:
+    
+    public:
+        XinputWatcher();
+        virtual ~XinputWatcher();
+        int watch(std::string inputID);
+        int print_events(XEventPrinter printer);
 };
 
 #include "XinputWatcher.cpp"
