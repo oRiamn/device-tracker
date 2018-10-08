@@ -27,7 +27,7 @@ int XinputWatcher::watch(std::string inputID)
 
 	if (!info)
 	{
-		fprintf(stderr, "unable to find device '%s'\n", inputIdChar);
+        cout << "Unable to find device '" << inputIdChar << "'." <<  endl;
         return EXIT_FAILURE;
 	}
 	else
@@ -74,11 +74,8 @@ XinputWatcher::find_device_info(char *name,
 		{
 			if (found)
 			{
-				fprintf(stderr,
-						"Warning: There are multiple devices named '%s'.\n"
-						"To ensure the correct one is selected, please use "
-						"the device ID instead.\n\n",
-						name);
+                cout << "Warning: There are multiple devices named '" << name << "'." <<  endl;
+                cout << "To ensure the correct one is selected, please use the device ID instead." <<  endl;
 				return NULL;
 			}
 			else
@@ -148,7 +145,6 @@ XinputWatcher::print_events(XEventPrinter &printer)
     if (XGetEventData(dpy, cookie) &&
         cookie->type == GenericEvent)
     {
-        printf("EVENT type %d (%s)\n", cookie->evtype, printer.type_to_name(cookie->evtype));
         switch (cookie->evtype)
         {
             case XI_DeviceChanged:

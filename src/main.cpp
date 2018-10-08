@@ -8,8 +8,9 @@ using namespace std;
 int main( int argc, const char* argv[] )
 {
     XinputWatcher watcher = XinputWatcher();
-	std::string inputId = "16";  
-	watcher.watch(inputId);
+	watcher.watch("15");
+    watcher.watch("19");
+    
     XEventPrinter printer = XEventPrinter();
     int i = 0;
 	while(true){

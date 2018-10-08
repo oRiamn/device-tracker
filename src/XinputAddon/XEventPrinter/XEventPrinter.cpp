@@ -1,7 +1,7 @@
 std::stringstream buffer;
 
 XEventPrinter::XEventPrinter()
-{
+{  
 }
 
 std::string 
@@ -9,6 +9,7 @@ XEventPrinter::flush()
 {
     std::string value = buffer.str();
     buffer.str("");
+    
     return value;
 }
 
