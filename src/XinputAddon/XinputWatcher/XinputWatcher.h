@@ -26,7 +26,7 @@ class XinputWatcher
         XinputWatcher();
         virtual ~XinputWatcher();
         int watch(std::string inputID);
-        int print_events(XEventPrinter printer);
+        int print_events(XEventPrinter &printer);
 };
 
 #include "XinputWatcher.cpp"

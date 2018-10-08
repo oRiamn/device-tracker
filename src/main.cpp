@@ -8,12 +8,13 @@ using namespace std;
 int main( int argc, const char* argv[] )
 {
     XinputWatcher watcher = XinputWatcher();
-	std::string inputId = "15";  
+	std::string inputId = "16";  
 	watcher.watch(inputId);
     XEventPrinter printer = XEventPrinter();
     int i = 0;
 	while(true){
         watcher.print_events(printer);
+        cout << printer.flush();
         i++;
     }
 

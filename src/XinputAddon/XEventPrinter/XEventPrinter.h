@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <sstream>
 
 #include <X11/extensions/XInput.h>
@@ -12,6 +12,7 @@
 class XEventPrinter
 {
     private:
+       std::stringstream buffer;
 
     protected:
     

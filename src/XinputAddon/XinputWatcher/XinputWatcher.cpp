@@ -138,7 +138,7 @@ XinputWatcher::register_device(int deviceid)
 }
 
 int
-XinputWatcher::print_events(XEventPrinter printer)
+XinputWatcher::print_events(XEventPrinter &printer)
 {
 
     XEvent ev;

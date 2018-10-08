@@ -1,10 +1,15 @@
+std::stringstream buffer;
+
 XEventPrinter::XEventPrinter()
 {
 }
 
-std::string flush()
+std::string 
+XEventPrinter::flush()
 {
-    return "";
+    std::string value = buffer.str();
+    buffer.str("");
+    return value;
 }
 
 const char* 
@@ -45,10 +50,10 @@ XEventPrinter::type_to_name(int evtype)
 void 
 XEventPrinter::devicechanged(Display *dpy, XIDeviceChangedEvent *event)
 {
-    std::cout << "    device: " << event->deviceid << " (" << event->sourceid << ")" << std::endl;
-    std::cout << "    reason: ";
-        std::cout<< (event->reason == XISlaveSwitch ? "SlaveSwitch" : "DeviceChanged");
-    std::cout << std::endl;
+    buffer << "    device: " << event->deviceid << " (" << event->sourceid << ")" << std::endl;
+    buffer << "    reason: ";
+        buffer<< (event->reason == XISlaveSwitch ? "SlaveSwitch" : "DeviceChanged");
+    buffer << std::endl;
 }
 
 void 
@@ -56,16 +61,16 @@ XEventPrinter::hierarchychanged(XIHierarchyEvent *event)
 {
     int i;
 
-    std::cout << "    Changes happened: ";
-        std::cout << (event->info[i].flags & XIMasterAdded ? "[new master]" : "");
-        std::cout << (event->info[i].flags & XIMasterRemoved ? "[master removed]" : "");
-        std::cout << (event->info[i].flags & XISlaveAdded ? "[new slave]" : "");
-        std::cout << (event->info[i].flags & XISlaveRemoved ? "[slave removed]" : "");
-        std::cout << (event->info[i].flags & XISlaveAttached ? "[slave attached]" : "");
-        std::cout << (event->info[i].flags & XISlaveDetached ? "[slave detached]" : "");
-        std::cout << (event->info[i].flags & XIDeviceEnabled ? "[device enabled]" : "");
-        std::cout << (event->info[i].flags & XIDeviceDisabled ? "[device disabled]" : "");
-    std::cout << std::endl;
+    buffer << "    Changes happened: ";
+        buffer << (event->info[i].flags & XIMasterAdded ? "[new master]" : "");
+        buffer << (event->info[i].flags & XIMasterRemoved ? "[master removed]" : "");
+        buffer << (event->info[i].flags & XISlaveAdded ? "[new slave]" : "");
+        buffer << (event->info[i].flags & XISlaveRemoved ? "[slave removed]" : "");
+        buffer << (event->info[i].flags & XISlaveAttached ? "[slave attached]" : "");
+        buffer << (event->info[i].flags & XISlaveDetached ? "[slave detached]" : "");
+        buffer << (event->info[i].flags & XIDeviceEnabled ? "[device enabled]" : "");
+        buffer << (event->info[i].flags & XIDeviceDisabled ? "[device disabled]" : "");
+    buffer << std::endl;
 
     for (i = 0; i < event->num_info; i++)
     {
@@ -80,23 +85,23 @@ XEventPrinter::hierarchychanged(XIHierarchyEvent *event)
                 break;
         }
         
-        std::cout << "    device " << event->info[i].deviceid;
-            std::cout << "["  << use << " (" << event->info[i].attachment << ")]";
-            std::cout << " is " << (event->info[i].enabled ? "enabled" : "disabled");
-        std::cout << std::endl;
+        buffer << "    device " << event->info[i].deviceid;
+            buffer << "["  << use << " (" << event->info[i].attachment << ")]";
+            buffer << " is " << (event->info[i].enabled ? "enabled" : "disabled");
+        buffer << std::endl;
         
         if (event->info[i].flags)
         {   
-            std::cout << "    changes: ";
-                std::cout << (event->info[i].flags & XIMasterAdded ? "[new master]" : "");
-                std::cout << (event->info[i].flags & XIMasterRemoved ? "[master removed]" : "");
-                std::cout << (event->info[i].flags & XISlaveAdded ? "[new slave]" : "");
-                std::cout << (event->info[i].flags & XISlaveRemoved ? "[slave removed]" : "");
-                std::cout << (event->info[i].flags & XISlaveAttached ? "[slave attached]" : "");
-                std::cout << (event->info[i].flags & XISlaveDetached ? "[slave detached]" : "");
-                std::cout << (event->info[i].flags & XIDeviceEnabled ? "[device enabled]" : "");
-                std::cout << (event->info[i].flags & XIDeviceDisabled ? "[device disabled]" : "");
-            std::cout << std::endl;
+            buffer << "    changes: ";
+                buffer << (event->info[i].flags & XIMasterAdded ? "[new master]" : "");
+                buffer << (event->info[i].flags & XIMasterRemoved ? "[master removed]" : "");
+                buffer << (event->info[i].flags & XISlaveAdded ? "[new slave]" : "");
+                buffer << (event->info[i].flags & XISlaveRemoved ? "[slave removed]" : "");
+                buffer << (event->info[i].flags & XISlaveAttached ? "[slave attached]" : "");
+                buffer << (event->info[i].flags & XISlaveDetached ? "[slave detached]" : "");
+                buffer << (event->info[i].flags & XIDeviceEnabled ? "[device enabled]" : "");
+                buffer << (event->info[i].flags & XIDeviceDisabled ? "[device disabled]" : "");
+            buffer << std::endl;
         }
     }
 }
@@ -107,17 +112,17 @@ XEventPrinter::raw(XIRawEvent *event)
     int i;
     double *val, *raw_val;
 
-    std::cout << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
-    std::cout << "    detail: " << event->detail << std::endl;
+    buffer << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
+    buffer << "    detail: " << event->detail << std::endl;
 
-    std::cout << "    valuators:" << std::endl;
+    buffer << "    valuators:" << std::endl;
     val = event->valuators.values;
     raw_val = event->raw_values;
     for (i = 0; i < event->valuators.mask_len * 8; i++)
         if (XIMaskIsSet(event->valuators.mask, i))
-            std::cout << "         " << i << ": " << *val++ << "(" << *raw_val++ << ")"<< std::endl;
+            buffer << "         " << i << ": " << *val++ << "(" << *raw_val++ << ")"<< std::endl;
    
-   std::cout <<  std::endl;
+   buffer <<  std::endl;
 }
 
 void 
@@ -127,12 +132,12 @@ XEventPrinter::enterleave(XILeaveEvent* event)
          *detail = "<undefined>";
     int i;
 
-    std::cout << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
+    buffer << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
 
-    std::cout << "    windows: root" << event->root;
-        std::cout << " event " << event->event;
-        std::cout << " child " << event->child;
-    std::cout << std::endl;
+    buffer << "    windows: root" << event->root;
+        buffer << " event " << event->event;
+        buffer << " child " << event->child;
+    buffer << std::endl;
 
 
     switch(event->mode)
@@ -156,31 +161,31 @@ XEventPrinter::enterleave(XILeaveEvent* event)
         case XINotifyDetailNone: detail = "NotifyDetailNone"; break;
     }
 
-    std::cout << "    mode: " << mode << "(detail " << detail << ")" << std::endl;
+    buffer << "    mode: " << mode << "(detail " << detail << ")" << std::endl;
 
-    std::cout << "    flags: ";
-        std::cout << (event->focus ? "[focus]" : "" ) << " ";
-        std::cout <<  (event->same_screen ? "[same screen]" : "");
-    std::cout << std::endl;
+    buffer << "    flags: ";
+        buffer << (event->focus ? "[focus]" : "" ) << " ";
+        buffer <<  (event->same_screen ? "[same screen]" : "");
+    buffer << std::endl;
 
-    std::cout << "    buttons:";
+    buffer << "    buttons:";
     for (i = 0; i < event->buttons.mask_len * 8; i++)
         if (XIMaskIsSet(event->buttons.mask, i))
-            std::cout << " " << i;
+            buffer << " " << i;
 
-    std::cout << std::endl;
+    buffer << std::endl;
     
-    std::cout << "    modifiers: locked " << event->mods.locked << " latched" << event->mods.latched;
-        std::cout << " base " << event->mods.locked << " effective: " << event->mods.effective;
-    std::cout << std::endl;
+    buffer << "    modifiers: locked " << event->mods.locked << " latched" << event->mods.latched;
+        buffer << " base " << event->mods.locked << " effective: " << event->mods.effective;
+    buffer << std::endl;
     
 
-    std::cout << "    group: locked " << event->group.locked << " latched" << event->group.latched;
-        std::cout << " base " << event->group.locked << " effective: " << event->group.effective;
-    std::cout << std::endl;
+    buffer << "    group: locked " << event->group.locked << " latched" << event->group.latched;
+        buffer << " base " << event->group.locked << " effective: " << event->group.effective;
+    buffer << std::endl;
 
-    std::cout << "    root x/y:  " << event->root_x << "/" <<  event->root_y  << std::endl;
-    std::cout << "    event x/y:  " << event->event_x << "/" <<  event->event_y  << std::endl;
+    buffer << "    root x/y:  " << event->root_x << "/" <<  event->root_y  << std::endl;
+    buffer << "    event x/y:  " << event->event_x << "/" <<  event->event_y  << std::endl;
 }
 
 void 
@@ -198,9 +203,9 @@ XEventPrinter::property(Display *display, XIPropertyEvent* event)
     
     name = XGetAtomName(display, event->property);
 
-    std::cout << "     property: " << event->property << " " << name << std::endl;
+    buffer << "     property: " << event->property << " " << name << std::endl;
 
-    std::cout << "     changed: " << changed << std::endl;
+    buffer << "     changed: " << changed << std::endl;
 
     XFree(name);
 }
@@ -211,47 +216,47 @@ XEventPrinter::device(XIDeviceEvent* event)
     double *val;
     int i;
 
-    std::cout << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
-    std::cout << "    detail: " << event->detail << std::endl;
+    buffer << "    device: " << event->deviceid << " " << event->sourceid << std::endl;
+    buffer << "    detail: " << event->detail << std::endl;
 
     switch(event->evtype) {
         case XI_KeyPress:
         case XI_KeyRelease:
-            std::cout << "    flags: " << ((event->flags & XIKeyRepeat) ?  "repeat" : "") << std::endl;
+            buffer << "    flags: " << ((event->flags & XIKeyRepeat) ?  "repeat" : "") << std::endl;
             break;
     }
 
-    std::cout << "    root: " << event->root_x << " " << event->root_y << std::endl;
-    std::cout << "    event: " << event->event_x << " " << event->event_y << std::endl;
+    buffer << "    root: " << event->root_x << " " << event->root_y << std::endl;
+    buffer << "    event: " << event->event_x << " " << event->event_y << std::endl;
 
-    std::cout << "    buttons:" << std::endl;
+    buffer << "    buttons:" << std::endl;
     for (i = 0; i < event->buttons.mask_len * 8; i++)
         if (XIMaskIsSet(event->buttons.mask, i))
-            std::cout << " " << i;
+            buffer << " " << i;
     
-    std::cout << std::endl;
+    buffer << std::endl;
 
 
-    std::cout << "    modifiers: locked " << event->mods.locked << " latched" << event->mods.latched;
-        std::cout << " base " << event->mods.locked << " effective: " << event->mods.effective;
-    std::cout << std::endl;
+    buffer << "    modifiers: locked " << event->mods.locked << " latched" << event->mods.latched;
+        buffer << " base " << event->mods.locked << " effective: " << event->mods.effective;
+    buffer << std::endl;
     
 
-    std::cout << "    group: locked " << event->group.locked << " latched" << event->group.latched;
-        std::cout << " base " << event->group.locked << " effective: " << event->group.effective;
-    std::cout << std::endl;
+    buffer << "    group: locked " << event->group.locked << " latched" << event->group.latched;
+        buffer << " base " << event->group.locked << " effective: " << event->group.effective;
+    buffer << std::endl;
 
 
-    std::cout << "    valuators:" << std::endl;
+    buffer << "    valuators:" << std::endl;
 
     val = event->valuators.values;
     for (i = 0; i < event->valuators.mask_len * 8; i++)
         if (XIMaskIsSet(event->valuators.mask, i))
-            std::cout << "        " << i << ": " << *val++ << std::endl;
+            buffer << "        " << i << ": " << *val++ << std::endl;
 
-    std::cout << "    windows: root" << event->root;
-        std::cout << " event " << event->event;
-        std::cout << " child " << event->child;
-    std::cout << std::endl;
+    buffer << "    windows: root" << event->root;
+        buffer << " event " << event->event;
+        buffer << " child " << event->child;
+    buffer << std::endl;
 }
 
