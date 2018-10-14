@@ -6,8 +6,6 @@ ENTRY=main.cpp
 
 .DEFAULT_GOAL := compile
 
-all: ./$(EXEC)
-
 compile:
 	$(CC) $(CFLAGS) $(ENTRY) -o $(EXEC) $(LDFLAGS)
 	chmod 777 $(EXEC)
