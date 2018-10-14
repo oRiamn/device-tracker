@@ -1,13 +1,9 @@
-CC=g++
-CFLAGS=-fpermissive
-LDFLAGS=-lX11 -lXi -lm -lpthread 
-EXEC=build/run
-ENTRY=src/main.cpp
 
-all: ./$(EXEC)
+docker-build: 
+	docker-compose build
 
-compile:
-	$(CC) $(CFLAGS) $(ENTRY) -o $(EXEC) $(LDFLAGS)
+up: docker-build
+	docker-compose up
 
-run: compile
-	./$(EXEC)
+exec: up
+	./build/run
