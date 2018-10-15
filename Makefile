@@ -1,9 +1,11 @@
 
+.DEFAULT_GOAL := run
+
 docker-build: 
 	docker-compose build
 
-up: docker-build
+build: docker-build
 	docker-compose up
 
-exec: up
+run: build
 	./build/run

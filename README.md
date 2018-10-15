@@ -7,7 +7,20 @@ Besides allowing raw access to the xinput device, it also provides a small wrapp
 ## Requirements
 
 [xinput](https://packages.debian.org/search?keywords=xinput) for linux.
-[libxi-dev](https://packages.debian.org/search?keywords=libxi-dev) for linux ( XInput.h & XInput2.h classes) .
+[Docker](https://docs.docker.com/install/) for building application.
 
-Please ensure you have the [required dependencies](https://github.com/nodejs/node-gyp#installation) as well installed.
+## Usage 
 
+Clone the project.
+
+For identify your device id folow this command :
+
+```BASH
+xinput --list
+```
+
+Edit **src/main.ccp** for define input id to watch.
+
+```BASH
+make run
+```
