@@ -1,0 +1,9 @@
+version: "3.1"
+
+services:
+  builder:
+    container_name: device-tracker
+    build: .
+    volumes:
+      - ./src:/app/src
+      - ./build:/app/build

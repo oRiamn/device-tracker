@@ -8,8 +8,10 @@ using namespace std;
 int main( int argc, const char* argv[] )
 {
     XinputWatcher watcher = XinputWatcher();
-	watcher.watch("15");
-    watcher.watch("19");
+
+    // define id. 
+	watcher.watch("18");
+    // watcher.watch("18"); you can define many ids
     
     XEventPrinter printer = XEventPrinter();
     int i = 0;
