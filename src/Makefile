@@ -8,4 +8,3 @@ ENTRY=main.cpp
 
 compile:
 	$(CC) $(CFLAGS) $(ENTRY) -o $(EXEC) $(LDFLAGS)
-	chmod 777 $(EXEC)

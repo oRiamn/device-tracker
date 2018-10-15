@@ -8,7 +8,7 @@ using namespace std;
 int main( int argc, const char* argv[] )
 {
     XinputWatcher watcher = XinputWatcher();
-	watcher.watch("15");
+	watcher.watch("18");
     watcher.watch("19");
     
     XEventPrinter printer = XEventPrinter();
