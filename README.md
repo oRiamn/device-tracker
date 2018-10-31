@@ -19,7 +19,14 @@ For identify your device id folow this command :
 xinput --list
 ```
 
-Edit **src/main.ccp** for define input id to watch.
+Edit **./MakeFile** for define input identifiers to watch. 
+You can use *-w* option multiple times.
+For example : 
+```BASH
+./build/run -w ID1 -w ID2
+```
+
+After that build and run with this command : 
 
 ```BASH
 make run
