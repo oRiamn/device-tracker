@@ -4,10 +4,27 @@
 
 Besides allowing raw access to the xinput device, it also provides a small wrapper class which emits events based on controller input.
 
-## Requirements
+## Install
+### Requirements
 
 [xinput](https://packages.debian.org/search?keywords=xinput) for linux.
 [Docker](https://docs.docker.com/install/) for building application.
+
+### Build
+
+Install this project with this command :
+
+```BASH
+make build
+```
+
+### Unistall
+
+Unistall this project with this command :
+
+```BASH
+make clean
+```
 
 ## Usage 
 
