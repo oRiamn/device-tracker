@@ -12,6 +12,8 @@ Besides allowing raw access to the xinput device, it also provides a small wrapp
 
 ### Build
 
+Clone the project.
+
 Install this project with this command :
 
 ```BASH
@@ -27,8 +29,6 @@ make clean
 ```
 
 ## Usage 
-
-Clone the project.
 
 For identify your device id folow this command :
 
